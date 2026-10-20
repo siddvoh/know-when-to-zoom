@@ -1,0 +1,8 @@
+.env
+.DS_Store
+__pycache__/
+.venv/
+data/downloads/
+data/images/
+*.tmp
+*.part

@@ -1,0 +1,48 @@
+Third-party material in this repository
+
+The MIT license in LICENSE covers the code. It does not cover the dataset
+material below, which keeps its own terms. No dataset images are included;
+code/download.py fetches them, and the images sent to the models are rebuilt
+by code/render.py. The model answers in data/calls were produced by the models
+listed in code/items.py.
+
+V* Bench (Wu and Xie, CVPR 2024)
+  License: MIT for the code and annotations, https://github.com/penghao-wu/vstar;
+  the images come from SA-1B and keep the SA-1B research license.
+  Source: https://huggingface.co/datasets/craigwu/vstar_bench at revision
+  d9ae62c903da0c98336e85c5ee89cd863b04b4da
+  Included: the questions, options and target boxes of the 191
+  direct_attributes and relative_position items in data/items/photos.jsonl.
+  Changes: options shuffled with a fixed seed; a "cannot tell" option added.
+  Cite: Wu and Xie, V*: Guided Visual Search as a Core Mechanism in
+  Multimodal LLMs, CVPR 2024.
+
+HR-Bench (Wang et al., AAAI 2025)
+  License: No license stated; used only for evaluation; images not
+  redistributed.
+  Source: https://huggingface.co/datasets/DreamMr/HR-Bench at revision
+  83b9013d6293b85dc507e87199ca52517536939c (hr_bench_8k.parquet)
+  Included: 150 questions with their options and answers in
+  data/items/photos.jsonl. Changes: options shuffled with a fixed seed; a
+  "cannot tell" option added.
+  Cite: Wang et al., Divide, Conquer and Combine: A Training-Free Framework
+  for High-Resolution Image Perception in Multimodal Large Language Models,
+  AAAI 2025.
+
+MME-RealWorld-Lite (Zhang et al., ICLR 2025)
+  License: Apache-2.0 for the benchmark, https://github.com/yfzhang114/MME-RealWorld;
+  the images keep the terms of their source datasets.
+  Source: https://huggingface.co/datasets/yifanzhang114/MME-RealWorld-Lite at
+  revision 0e378f64aea87bb2c30dae8bc600f99fae966711
+  Included: 130 Remote Sensing and 130 Monitoring perception questions with
+  their options and answers in data/items/photos.jsonl. Changes: a "cannot
+  tell" option added.
+  Cite: Zhang et al., MME-RealWorld: Could Your Multimodal LLM Challenge
+  High-Resolution Real-World Scenarios that are Difficult for Humans?,
+  ICLR 2025.
+
+DejaVu Sans Bold
+  License: Bitstream Vera and DejaVu font license.
+  Source: the copy bundled with matplotlib.
+  Included: none; the eye-exam images drawn with it are rebuilt by
+  code/render.py.
