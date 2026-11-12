@@ -18,12 +18,11 @@ CANVAS = {"1024x768": "#86b6ef", "2048x1536": "#3987e5", "4096x3072": "#1c5cab",
 LOST = (("rejected", "image rejected", "#52514e"), ("cannot_tell", "said it cannot tell", "#c3c2b7"),
         ("other_wrong", "wrong, confidence below 70", "#86b6ef"),
         ("confident_wrong", "wrong, confidence 70 or more", "#e34948"))
-STRATEGY = {"as_is": ("o", "as is"), "max": ("^", "highest setting"), "tile2": ("s", "2 x 2 tiles"),
-            "tile3": ("p", "3 x 3 tiles"), "zoom": ("D", "two-step zoom"), "check": ("*", "zoom check"),
+STRATEGY = {"as_is": ("o", "as is"), "max": ("^", "highest setting"), "tile2": ("s", "2×2 tiles"),
+            "tile3": ("p", "3×3 tiles"), "zoom": ("D", "two-step zoom"), "check": ("*", "zoom check"),
             "oracle": ("X", "oracle")}
-NAMES = {"claude-haiku-5-5": "Haiku 5.5", "claude-sonnet-5-5": "Sonnet 5.5", "gemini-3.5-flash-lite": "Flash-Lite 3.5",
-         "gemini-3.8-flash": "Flash 3.8", "gpt-6-luna": "GPT-6 Luna", "gpt-6.1-sol": "GPT-6.1 Sol",
-         "qwen3.8-27b": "Qwen3.8-27B"}
+NAMES = {"claude-haiku-5-5": "Haiku", "claude-sonnet-5-5": "Sonnet", "gemini-3.5-flash-lite": "Flash-Lite",
+         "gemini-3.8-flash": "Flash", "gpt-6-luna": "Luna", "gpt-6.1-sol": "Sol", "qwen3.8-27b": "Qwen"}
 CURVE_SETTING = {"anthropic": "native", "gemini": "high", "openai": "high", "qwen": "default"}
 SETTING_NAMES = {"native": "native", "old-tier": "standard", "low": "low", "medium": "medium", "high": "high",
                  "ultra_high": "ultra high", "auto": "auto", "default": "default"}
@@ -58,8 +57,8 @@ def example(values):
     grid = figure.add_gridspec(2, 4, width_ratios=[2.2, 1, 1, 1], wspace=0.08, hspace=0.25)
     whole = figure.add_subplot(grid[:, 0])
     item = rows["eye-2048x1536-c040-00"]
-    whole.imshow(Image.open(config.IMAGES / "eye" / f"{item['id']}.jpg"))
-    whole.set_title("2048 x 1536 canvas", fontsize=6)
+    whole.imshow(Image.open(config.IMAGES / "eye" / f"{item['id']}.jpg"), interpolation="none")
+    whole.set_title("2048 × 1536 canvas", fontsize=6)
     for index, cap in enumerate((4, 6, 9, 13, 19, 40)):
         item = rows[f"eye-2048x1536-c{cap:03d}-00"]
         x0, y0, x1, y1 = item["label"]
@@ -67,7 +66,7 @@ def example(values):
         crop = Image.open(config.IMAGES / "eye" / f"{item['id']}.jpg").crop(
             (round(middle_x - half), round(middle_y - half / 2), round(middle_x + half), round(middle_y + half / 2)))
         axis = figure.add_subplot(grid[index // 3, 1 + index % 3])
-        axis.imshow(crop, interpolation="nearest")
+        axis.imshow(crop, interpolation="none")
         axis.set_title(f"{cap} px", fontsize=6, pad=2)
     for axis in figure.axes:
         axis.set_xticks([])
@@ -92,14 +91,14 @@ def eye_curves(values):
                 continue
             exact = [row["exact"] for row in rows]
             axes[0, column].plot([row["cap"] for row in rows], exact, color=color, marker="o", markersize=2.5,
-                                 label=canvas.replace("x", " x "))
+                                 label=canvas.replace("x", " × "))
             axes[1, column].plot([row["tokens"] for row in rows], exact, color=color, marker="o", markersize=2.5)
         beta = fit["received"]["beta"]
         if beta:
             grid = np.linspace(np.log2(min(r["tokens"] for r in cells if r["model"] == model and r["tokens"])),
                                np.log2(max(r["tokens"] for r in cells if r["model"] == model and r["tokens"])), 100)
-            axes[1, column].plot(2 ** grid, 1 / (1 + np.exp(-(beta[0] + beta[1] * grid))), color=MUTED,
-                                 linewidth=0.8, linestyle=(0, (2, 1.5)))
+            axes[1, column].plot(2 ** grid, 1 / (1 + np.exp(-(beta[0] + beta[1] * grid))), color=INK,
+                                 linewidth=0.9, linestyle=(0, (2, 1.5)), zorder=3)
         axes[0, column].set_title(f"{NAMES[model]}\n{SETTING_NAMES[setting]}")
         log2_axis(axes[0, column], [4, 16, 64])
         log2_axis(axes[1, column], [1 / 32, 1 / 4, 2])
@@ -109,7 +108,7 @@ def eye_curves(values):
     axes[1, 0].set_ylabel("exact reads")
     middle = len(models) // 2
     axes[0, middle].set_xlabel("cap height in original pixels")
-    axes[1, middle].set_xlabel("cap height in visual tokens received")
+    axes[1, middle].set_xlabel("cap height in image tokens received")
     handles, labels = axes[0, 0].get_legend_handles_labels()
     figure.legend(handles, [f"{label} canvas" for label in labels], loc="lower center", ncol=4, frameon=False,
                   bbox_to_anchor=(0.5, 0.0))
@@ -135,7 +134,7 @@ def eight_k(values):
         right.text(row["tokens"], place, f" {row['tokens']:,}", va="center", fontsize=5.5, color=INK)
     left.set_yticks(places, labels)
     left.set_xlabel("smallest readable\ncap height (px)")
-    right.set_xlabel("visual tokens\nfor the photo")
+    right.set_xlabel("image tokens\nfor the photo")
     right.set_xscale("log")
     right.set_xlim(150, 60000)
     left.set_xlim(0, 30)
@@ -186,17 +185,21 @@ def accuracy_tokens(values):
             for name, entry in entries.items():
                 marker, _ = STRATEGY[name]
                 size = 9 if name == "check" else 4.5
+                hollow = name == "check"
                 axis.errorbar(entry["tokens"], entry["accuracy"],
                               yerr=[[entry["accuracy"] - entry["ci"][0]], [entry["ci"][1] - entry["accuracy"]]],
                               color=color, marker=marker, markersize=size, linewidth=0.6, capsize=0,
-                              markeredgecolor="#fcfcfb", markeredgewidth=0.6)
+                              markerfacecolor="none" if hollow else color,
+                              markeredgecolor=color if hollow else "#fcfcfb", markeredgewidth=0.8 if hollow else 0.6,
+                              zorder=3 if hollow else 2)
         axis.set_xscale("log")
         axis.set_xlabel("image tokens per question (mean)")
         axis.set_title(f"{tier} models")
         axis.legend(frameon=False, loc="lower right", handlelength=1.6)
     axes[0].set_ylabel("accuracy")
     shapes = [plt.Line2D([], [], color=MUTED, marker=marker, linestyle="", markersize=7 if name == "check" else 4.5,
-                         label=label) for name, (marker, label) in STRATEGY.items()]
+                         markerfacecolor="none" if name == "check" else MUTED, label=label)
+              for name, (marker, label) in STRATEGY.items()]
     figure.legend(handles=shapes, loc="lower center", ncol=7, frameon=False, bbox_to_anchor=(0.5, -0.02))
     figure.tight_layout(rect=(0, 0.07, 1, 1))
     return figure

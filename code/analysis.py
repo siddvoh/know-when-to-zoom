@@ -11,6 +11,7 @@ import zoomcheck
 RESAMPLES = 2000
 ALPHA = 0.05
 RIDGE = 0.01
+RIDGES = tuple(float(value) for value in np.logspace(-4, -1, 13))
 CANNOT_TELL = "X"
 CONFIDENT = 70
 GAP = 0.02
@@ -37,13 +38,13 @@ def image_tokens(image, model):
     return zoomcheck.image_tokens(image["width"], image["height"], rule(model, image["setting"]))
 
 
-def fit(x, y, weight=None, start=None):
+def fit(x, y, weight=None, start=None, ridge=RIDGE):
     weight = np.ones(len(x)) if weight is None else weight
     hits, total = float(weight @ y), float(weight.sum())
     if hits == 0 or hits == total:
         return None
     design = np.column_stack([np.ones(len(x)), x])
-    penalty = np.diag([0.0, RIDGE])
+    penalty = np.diag([0.0, ridge])
     beta = np.zeros(2) if start is None else start.copy()
     for _ in range(200):
         p = expit(design @ beta)
@@ -203,6 +204,31 @@ def fit_group(group, seed):
                "received": {"c50": c50(received), "ci": interval(draws["received"]),
                             "beta": received.tolist() if received is not None else None}}
     return summary, draws
+
+
+def h1_at(group, ridge):
+    caps = np.array([row["cap"] for row in group], float)
+    x_px, x_tok = np.log2(caps), np.log2([row["tokens"] for row in group])
+    y = np.array([row["exact"] for row in group], float)
+    where = np.array([row["canvas"] for row in group])
+    received, original = fit(x_tok, y, ridge=ridge), fit(x_px, y, ridge=ridge)
+    tokens = []
+    for canvas in sorted(set(where), key=canvas_order):
+        mask = where == canvas
+        value = c50(fit(x_px[mask], y[mask], ridge=ridge))
+        if value is not None and caps[mask].min() <= value <= caps[mask].max() and y[mask].min() == 0 \
+                and y[mask].max() == 1:
+            factor = next(row["tokens"] / row["cap"] for row in group if row["canvas"] == canvas)
+            tokens.append(value * factor)
+    if len(tokens) < 2 or received is None or original is None:
+        return None
+    gain = 2 * log_likelihood(received, x_tok, y) - 2 * log_likelihood(original, x_px, y)
+    return bool(gain >= AIC_GAIN and max(tokens) / min(tokens) <= SPREAD)
+
+
+def ridge_sensitivity(groups):
+    return {"ridges": list(RIDGES), "h1": {key: [h1_at(group, ridge) for ridge in RIDGES]
+                                            for key, group in sorted(groups.items())}}
 
 
 def eye_cells(rows):
@@ -477,7 +503,9 @@ def lost_details(photo_list, outcomes):
                          "confident_wrong": sum(step["confident"] for step in lost),
                          "other_wrong": sum(step["status"] == "ok" and not step["cannot_tell"] and not step["confident"]
                                             for step in lost),
-                         "unparsed": sum(step["status"] == "unparsed" for step in lost)}
+                         "unparsed": sum(step["status"] == "unparsed" for step in lost),
+                         "flipped": sum(outcomes[model]["as_is"][item["id"]]["correct"] and not tiles[item["id"]]["correct"]
+                                        for item in photo_list)}
     return result
 
 
@@ -577,6 +605,23 @@ def zoom_boxes(calls):
     return result
 
 
+def accepted_as_is(photo_list, outcomes):
+    result = {}
+    for model in items.MODELS:
+        steps = [outcomes[model]["as_is"][item["id"]] for item in photo_list]
+        kept = [step for step in steps if step["status"] != "rejected"]
+        if len(kept) < len(steps):
+            result[model] = {"photos": len(kept), "accuracy": float(np.mean([step["correct"] for step in kept]))}
+    return result
+
+
+def image_files(images):
+    rows = images.values()
+    return {"photos_reencoded": sum(row["kind"] == "photo" and "reencoded_from" in row for row in rows),
+            "lowered_quality": sum(row["kind"] in ("tile", "crop") and row["quality"] < 95 for row in rows),
+            "still_over_5mb": sum(row["kind"] in ("tile", "crop") and row["bytes"] > 5_000_000 for row in rows)}
+
+
 def target_sizes(photo_list):
     sides = np.array([min(target["box"][2], target["box"][3]) for item in photo_list if item["dataset"] == "vstar"
                       for target in item["targets"]], float)
@@ -626,11 +671,12 @@ def build():
         "token_match": token_match(calls, images),
         "eye": {"fits": fits, "cells": eye_cells(rows), "repeats": repeat_agreement(rows),
                 "tier_change": tier_change(fits, draws), "gemini_resolution": gemini_resolution(fits, draws),
-                "eight_k": eight_k(fits), "h2": h2},
+                "eight_k": eight_k(fits), "h2": h2, "ridge_sensitivity": ridge_sensitivity(groups)},
         "photos": {"strategies": strategies, "datasets": datasets, "shrink_split": shrink_split(photo_list, outcomes),
                    "shrink_rule": shrink_rule(photo_list, outcomes), "reply_signal": reply_signal(photo_list, outcomes),
                    "zoom_boxes": zoom_boxes(calls), "zoom_against_tiles": zoom_against_tiles(photo_list, outcomes),
                    "reply_policy": reply_policy(photo_list, outcomes),
+                   "accepted_as_is": accepted_as_is(photo_list, outcomes), "image_files": image_files(images),
                    "lost": lost_details(photo_list, outcomes), "sweep": sweep, "h3": h3, "h4": h4,
                    "vstar_targets": target_sizes(photo_list)},
         "hypotheses": hypotheses(fits, h2, h3, h4),

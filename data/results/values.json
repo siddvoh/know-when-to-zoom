@@ -7583,6 +7583,250 @@
     "same_code": 0.85
    }
   },
+  "ridge_sensitivity": {
+   "h1": {
+    "claude-haiku-5-5|native": [
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "claude-haiku-5-5|old-tier": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "claude-sonnet-5-5|native": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "claude-sonnet-5-5|old-tier": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.5-flash-lite|high": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.5-flash-lite|ultra_high": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.8-flash|high": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.8-flash|low": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.8-flash|medium": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gemini-3.8-flash|ultra_high": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gpt-6-luna|auto": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "gpt-6-luna|high": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "gpt-6.1-sol|auto": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "gpt-6.1-sol|high": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true
+    ],
+    "qwen3.8-27b|default": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "ridges": [
+    0.0001,
+    0.000178,
+    0.000316,
+    0.000562,
+    0.001,
+    0.001778,
+    0.003162,
+    0.005623,
+    0.01,
+    0.017783,
+    0.031623,
+    0.056234,
+    0.1
+   ]
+  },
   "tier_change": {
    "claude-haiku-5-5|4096x3072": {
     "ci": [
@@ -8031,6 +8275,16 @@
   }
  ],
  "photos": {
+  "accepted_as_is": {
+   "gpt-6-luna": {
+    "accuracy": 0.601036,
+    "photos": 386
+   },
+   "gpt-6.1-sol": {
+    "accuracy": 0.790155,
+    "photos": 386
+   }
+  },
   "datasets": [
    {
     "accuracy": 0.722513,
@@ -9391,10 +9645,16 @@
     "unflagged": 601
    }
   },
+  "image_files": {
+   "lowered_quality": 249,
+   "photos_reencoded": 89,
+   "still_over_5mb": 49
+  },
   "lost": {
    "claude-haiku-5-5": {
     "cannot_tell": 52,
     "confident_wrong": 9,
+    "flipped": 11,
     "lost": 98,
     "other_wrong": 37,
     "rejected": 0,
@@ -9403,6 +9663,7 @@
    "claude-sonnet-5-5": {
     "cannot_tell": 37,
     "confident_wrong": 4,
+    "flipped": 8,
     "lost": 75,
     "other_wrong": 34,
     "rejected": 0,
@@ -9411,6 +9672,7 @@
    "gemini-3.5-flash-lite": {
     "cannot_tell": 57,
     "confident_wrong": 52,
+    "flipped": 37,
     "lost": 109,
     "other_wrong": 0,
     "rejected": 0,
@@ -9419,6 +9681,7 @@
    "gemini-3.8-flash": {
     "cannot_tell": 54,
     "confident_wrong": 41,
+    "flipped": 20,
     "lost": 95,
     "other_wrong": 0,
     "rejected": 0,
@@ -9427,6 +9690,7 @@
    "gpt-6-luna": {
     "cannot_tell": 15,
     "confident_wrong": 17,
+    "flipped": 31,
     "lost": 194,
     "other_wrong": 6,
     "rejected": 156,
@@ -9435,6 +9699,7 @@
    "gpt-6.1-sol": {
     "cannot_tell": 1,
     "confident_wrong": 12,
+    "flipped": 12,
     "lost": 210,
     "other_wrong": 2,
     "rejected": 195,

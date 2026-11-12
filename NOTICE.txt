@@ -6,7 +6,7 @@ code/download.py fetches them, and the images sent to the models are rebuilt
 by code/render.py. The model answers in data/calls were produced by the models
 listed in code/items.py.
 
-V* Bench (Wu and Xie, CVPR 2024)
+V*Bench (Wu and Xie, CVPR 2024)
   License: MIT for the code and annotations, https://github.com/penghao-wu/vstar;
   the images come from SA-1B and keep the SA-1B research license.
   Source: https://huggingface.co/datasets/craigwu/vstar_bench at revision
