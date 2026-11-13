@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper."
+title: "Know When to Zoom: code and data"
+authors:
+  - family-names: Vohra
+    given-names: Siddharth
+    affiliation: Carnegie Mellon University
+  - family-names: Xu
+    given-names: Min
+    affiliation: Carnegie Mellon University
+license: MIT
+url: "https://siddvoh.com/know-when-to-zoom/"
+repository-code: "https://github.com/siddvoh/know-when-to-zoom"
+preferred-citation:
+  type: conference-paper
+  title: "Know When to Zoom: How Small Is Too Small for Vision-Language Models?"
+  authors:
+    - family-names: Vohra
+      given-names: Siddharth
+    - family-names: Xu
+      given-names: Min
+  collection-title: "Sensing via Agentic Reasoning Systems (SENSE) Workshop at WACV 2027"
+  conference:
+    name: "Sensing via Agentic Reasoning Systems (SENSE) Workshop, at WACV 2027"
+    city: Orlando
+    region: Florida
+    country: US
+  year: 2027
+  notes: "To appear"
+  url: "https://siddvoh.com/know-when-to-zoom/"
