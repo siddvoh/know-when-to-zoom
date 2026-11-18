@@ -27,4 +27,11 @@ preferred-citation:
     country: US
   year: 2027
   notes: "To appear"
-  url: "https://siddvoh.com/know-when-to-zoom/"
+  url: "https://arxiv.org/abs/2611.22709"
+  identifiers:
+    - type: doi
+      value: 10.48550/arXiv.2611.22709
+      description: "arXiv preprint"
+    - type: url
+      value: "https://siddvoh.com/know-when-to-zoom/"
+      description: "Project page"

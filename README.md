@@ -1,6 +1,6 @@
 # Know When to Zoom
 
-Code and data for *Know When to Zoom: How Small Is Too Small for Vision-Language Models?* by Siddharth Vohra and Min Xu, accepted to the SENSE workshop at WACV 2027. The paper and a plain-language walkthrough are at https://siddvoh.com/know-when-to-zoom/.
+Code and data for *Know When to Zoom: How Small Is Too Small for Vision-Language Models?* by Siddharth Vohra and Min Xu, accepted to the SENSE workshop at WACV 2027. The paper and a plain-language walkthrough are at https://siddvoh.com/know-when-to-zoom/, and the preprint is on arXiv at https://arxiv.org/abs/2611.22709.
 
 Online services shrink a large image, or squeeze it into a fixed grid of tokens, before a vision-language model sees it. Seven models read an eye exam of random five-character codes printed at ten text sizes on gray images from 1024 by 768 to 8000 by 6000 pixels. They then answered 601 multiple-choice questions about small objects in large photos from V*Bench, HR-Bench 8K and MME-RealWorld-Lite, with each photo sent as is, at Gemini's highest setting, as tiles, or as a two-step zoom. This repository holds all 31,053 answers and the code that turns them into the paper's results. Rebuilding the results calls no model.
 
@@ -63,15 +63,18 @@ Start from an empty `data/calls` and `data/images.jsonl`, since `run.py` skips e
 
 ```
 @inproceedings{vohra2027zoom,
-  title     = {Know When to Zoom: How Small Is Too Small for Vision-Language
-               Models?},
-  author    = {Vohra, Siddharth and Xu, Min},
-  booktitle = {Sensing via Agentic Reasoning Systems (SENSE) Workshop at
-               WACV 2027},
-  year      = {2027},
-  address   = {Orlando, Florida, USA},
-  note      = {To appear},
-  url       = {https://siddvoh.com/know-when-to-zoom/}
+  title         = {Know When to Zoom: How Small Is Too Small for Vision-Language
+                   Models?},
+  author        = {Vohra, Siddharth and Xu, Min},
+  booktitle     = {Sensing via Agentic Reasoning Systems (SENSE) Workshop at
+                   WACV 2027},
+  year          = {2027},
+  address       = {Orlando, Florida, USA},
+  note          = {To appear},
+  eprint        = {2611.22709},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2611.22709}
 }
 ```
 
